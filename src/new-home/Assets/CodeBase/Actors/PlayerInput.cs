@@ -22,9 +22,9 @@ namespace CodeBase.Actors
         public bool IsMultiplyCommand() =>
             Input.GetKey(KeyCode.LeftShift);
         
-        public bool TryGetFromMousePosition<TObject>(out TObject actor) where TObject : Component
+        public bool TryGetFromMousePosition<TObject>(out TObject actor)
         {
-            actor = null;
+            actor = default;
             
             var ray = _camera.ScreenPointToRay(Input.mousePosition);
             if (Physics.Raycast(ray, out var hit, Mathf.Infinity))

@@ -4,14 +4,20 @@ namespace CodeBase.Buildings
 {
     public class Building : MonoBehaviour
     {
-        [SerializeField] 
+        [SerializeField]
         private BuildingProgress _progress;
+
+        [SerializeField] 
+        private BuildingPreview _preview;
         
         [field: SerializeField]
         public Vector2Int Size { get; private set; }
         
         [field: SerializeField]
         public float TotalWorkToComplete { get; private set; }
+
+        [field: SerializeField] 
+        public float WorkForTick = 10; 
 
         public bool IsCompleted => _currentWork >= TotalWorkToComplete;
 
@@ -30,5 +36,8 @@ namespace CodeBase.Buildings
             for (var z = 0; z < Size.y; z++) 
                 Gizmos.DrawCube(transform.position + new Vector3(x, 0, z), new Vector3(1, 0.2f, 1));
         }
+
+        public Vector3 Center() => 
+            transform.position + _preview.Offset;
     }
 }

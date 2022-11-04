@@ -1,4 +1,6 @@
 ﻿using CodeBase.Buildings;
+using CodeBase.GameResources;
+using Mono.Cecil;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -20,10 +22,22 @@ namespace CodeBase.Actors
                 return;
             }
 
+            if (Player.TryGetFromMousePosition<IExtractedResource>(out var resource))
+            {
+                FarmResource(resource);
+                return;
+            }
+
             if (Selection.SelectedActors.Count < 2)
                 MoveSingleActor();
             else
                 MoveGroupActors();
+        }
+
+        private void FarmResource(IExtractedResource resource)
+        {
+            foreach (var actor in Selection.SelectedActors) 
+                actor.Execute(new WorkCommand(resource));
         }
 
         public void Build(Building building)

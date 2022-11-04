@@ -12,10 +12,10 @@ namespace CodeBase.Actors
         public MoveCommand(Vector3 targetPosition) => 
             _targetPosition = targetPosition;
 
-        public UniTask Execute(Actor actor)
+        public async UniTask Execute(Actor actor)
         {
             actor.SetDestination(_targetPosition);
-            return actor.WaitAgentMoved(_tokenSource.Token);
+            await actor.WaitAgentMoved(_tokenSource.Token);
         }
 
         public void Abort(Actor actor) => 

@@ -1,8 +1,6 @@
 ﻿using System.Threading;
 using CodeBase.Buildings;
 using Cysharp.Threading.Tasks;
-using DG.Tweening;
-using UnityEngine;
 
 namespace CodeBase.Actors
 {
@@ -22,17 +20,20 @@ namespace CodeBase.Actors
         public async UniTask Execute(Actor actor)
         {
             await _command.Execute(actor);
-            actor.SetDestination(actor.transform.position);
-            var rotateToTarget = actor.transform.DOLookAt(_building.transform.position, 0.5f);
-            await rotateToTarget.AsyncWaitForCompletion().AsUniTask().AttachExternalCancellation(_tokenSource.Token);
+            await new RotateToCommand(_building.Center()).Execute(actor);
             
             _isWorking = true;
+            actor.Pieces.Disable();
             actor.LaserGun.Enable();
             while (!_building.IsCompleted && _isWorking)
             {
-                _building.Work(10);
-                actor.LaserGun.UpdateLaser(_building.transform.position);
-                await UniTask.Delay(1000, cancellationToken: _tokenSource.Token);
+                _building.Work(_building.WorkForTick);
+                actor.LaserGun.UpdateLaser(_building.Center());
+                
+                if (_building.IsCompleted)
+                    break;
+                    
+                await UniTask.Delay(actor.Stats.BuildPause, cancellationToken: _tokenSource.Token);
             }
             actor.LaserGun.Disable();
         }

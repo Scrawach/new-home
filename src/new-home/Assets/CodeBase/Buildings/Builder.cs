@@ -9,7 +9,7 @@ namespace CodeBase.Buildings
         public TaskGiver TaskGiver;
         
         [SerializeField]
-        private Mesh _previewBuilding;
+        private BuildingPreview _previewBuilding;
 
         [SerializeField] 
         private Material _validPlaceMaterial;
@@ -56,7 +56,7 @@ namespace CodeBase.Buildings
         {
             _isProcessing = true;
             _processBuilding = building;
-            _previewBuilding = building.GetComponentInChildren<MeshFilter>().sharedMesh;
+            _previewBuilding = building.GetComponentInChildren<BuildingPreview>();
         }
 
         private void ResetBuild() => 
@@ -69,8 +69,10 @@ namespace CodeBase.Buildings
             TaskGiver.Build(building);
         }
 
-        private void RenderBuildingPreview(Vector3 position, Material material) => 
-            Graphics.DrawMesh(_previewBuilding, position, Quaternion.identity, material, 0);
+        private void RenderBuildingPreview(Vector3 position, Material material)
+        {
+            Graphics.DrawMesh(_previewBuilding.Renderer.sharedMesh, position + _previewBuilding.Offset, Quaternion.identity, material, 0);
+        }
 
         private static Vector3 MouseToGroundPoint(Camera targetCamera, Plane ground)
         {
