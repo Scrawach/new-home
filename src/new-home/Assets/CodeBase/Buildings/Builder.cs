@@ -1,10 +1,13 @@
 ﻿using System;
+using CodeBase.Actors;
 using UnityEngine;
 
 namespace CodeBase.Buildings
 {
     public class Builder : MonoBehaviour
     {
+        public TaskGiver TaskGiver;
+        
         [SerializeField]
         private Mesh _previewBuilding;
 
@@ -62,7 +65,8 @@ namespace CodeBase.Buildings
         private void Build(Vector3 at)
         {
             _isProcessing = false;
-            Instantiate(_processBuilding, at, Quaternion.identity);
+            var building = Instantiate(_processBuilding, at, Quaternion.identity);
+            TaskGiver.Build(building);
         }
 
         private void RenderBuildingPreview(Vector3 position, Material material) => 

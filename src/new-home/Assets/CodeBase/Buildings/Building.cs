@@ -4,8 +4,24 @@ namespace CodeBase.Buildings
 {
     public class Building : MonoBehaviour
     {
+        [SerializeField] 
+        private BuildingProgress _progress;
+        
         [field: SerializeField]
         public Vector2Int Size { get; private set; }
+        
+        [field: SerializeField]
+        public float TotalWorkToComplete { get; private set; }
+
+        public bool IsCompleted => _currentWork >= TotalWorkToComplete;
+
+        private float _currentWork;
+        
+        public void Work(float work)
+        {
+            _currentWork += work;
+            _progress.UpdateProgress(_currentWork / TotalWorkToComplete);
+        }
 
         private void OnDrawGizmos()
         {

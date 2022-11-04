@@ -10,6 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 988466126971079142}
   - component: {fileID: 988466126971079143}
+  - component: {fileID: 5273395075910508958}
+  - component: {fileID: 1188719407477649169}
   m_Layer: 0
   m_Name: Building
   m_TagString: Untagged
@@ -45,7 +47,40 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d8d3a50a450edb4ca3995d9663ffbba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _progress: {fileID: 1188719407477649169}
   <Size>k__BackingField: {x: 1, y: 1}
+  <TotalWorkToComplete>k__BackingField: 100
+--- !u!208 &5273395075910508958
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988466126971079140}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.5, y: 0.5, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0.5, z: 0}
+  m_TimeToStationary: 0.5
+--- !u!114 &1188719407477649169
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 988466126971079140}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: acacea746fc54e86a53905b5305fa905, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _mesh: {fileID: 988466127852612537}
+  _startPosition: {x: 0, y: -0.5, z: 0}
+  _resultPosition: {x: 0, y: 0.5, z: 0}
 --- !u!1 &988466127852612534
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,7 +143,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 31321ba15b8f8eb4c954353edc038b1d, type: 2}
+  - {fileID: 2100000, guid: 616a4dd0c610c434aafa12f3d792425e, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
