@@ -1,12 +1,21 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace CodeBase.GameResources
 {
+    [Serializable]
     public class ResourceActorPack
     {
+        [field:SerializeField]
         public ResourceType Type { get; private set; }
+        
+        [field:SerializeField]
         public int Count { get; private set; }
+        
+        [field:SerializeField]
         public int Max { get; }
+
+        public event Action Changed;
 
         public ResourceActorPack(int max) => Max = max;
 
@@ -18,6 +27,7 @@ namespace CodeBase.GameResources
                 Apply(type, count);
             
             Count = Mathf.Clamp(Count, 0, Max);
+            Changed?.Invoke();
         }
 
         private void Apply(ResourceType type, int count)
@@ -28,5 +38,13 @@ namespace CodeBase.GameResources
 
         public bool IsFull() => 
             Count >= Max;
+
+        public int TakeAll()
+        {
+            var current = Count;
+            Count = 0;
+            Changed?.Invoke();
+            return current;
+        }
     }
 }

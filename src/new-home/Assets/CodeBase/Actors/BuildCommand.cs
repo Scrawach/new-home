@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using CodeBase.Buildings;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace CodeBase.Actors
 {
@@ -11,16 +12,19 @@ namespace CodeBase.Actors
         private bool _isWorking;
         private readonly CancellationTokenSource _tokenSource = new();
 
+        private readonly RotateToCommand _rotateCommand;
+
         public BuildCommand(ICommand command, Building building)
         {
             _command = command;
             _building = building;
+            _rotateCommand = new RotateToCommand(building.Center());
         }
 
         public async UniTask Execute(Actor actor)
         {
             await _command.Execute(actor);
-            await new RotateToCommand(_building.Center()).Execute(actor);
+            await _rotateCommand.Execute(actor);
             
             _isWorking = true;
             actor.Pieces.Disable();
@@ -41,6 +45,7 @@ namespace CodeBase.Actors
         public void Abort(Actor actor)
         {
             _command.Abort(actor);
+            _rotateCommand.Abort(actor);
             actor.LaserGun.Disable();
             _isWorking = false;
             _tokenSource.Cancel();

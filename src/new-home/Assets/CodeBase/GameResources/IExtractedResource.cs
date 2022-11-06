@@ -7,6 +7,7 @@ namespace CodeBase.GameResources
     {
         ResourceType Type { get; }
         Vector3 Position { get; }
+        bool HasProfit { get; }
         void Work(Actor actor);
     }
 }

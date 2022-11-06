@@ -1,4 +1,5 @@
 ﻿using System.Threading;
+using CodeBase.Buildings;
 using CodeBase.Effects;
 using CodeBase.GameResources;
 using Cysharp.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace CodeBase.Actors
 
         [SerializeField] private ActorHandler _handler;
 
+        public MainCapsule Main;
+
         public ResourceActorPieces Pieces;
         public LaserGun LaserGun;
         public ResourceActorPack ResourcePack;
@@ -23,6 +26,9 @@ namespace CodeBase.Actors
         private void Awake() => 
             ResourcePack = new ResourceActorPack(Stats.MaxResourceCount);
 
+        public void Constructor(MainCapsule capsule) => 
+            Main = capsule;
+
         public void SetDestination(Vector3 point) =>
             _agent.destination = point;
 
@@ -32,6 +38,12 @@ namespace CodeBase.Actors
             _currentCommand?.Abort(this);
             _currentCommand = command;
             _currentCommand.Execute(this);
+        }
+
+        public (ResourceType type, int count) TakeAllResource()
+        {
+            Pieces.Disable();
+            return (ResourcePack.Type, ResourcePack.TakeAll());
         }
 
         public UniTask WaitAgentMoved(CancellationToken token = default) =>

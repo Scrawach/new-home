@@ -15,8 +15,13 @@ namespace CodeBase.Actors
         
         public async UniTask Execute(Actor actor)
         {
-            actor.SetDestination(actor.transform.position);
-            var rotateToTarget = actor.transform.DOLookAt(_targetPosition, 0.5f);
+            var result = _targetPosition;
+            result.y = actor.transform.position.y;
+
+            if (result == actor.transform.position)
+                return;
+            
+            var rotateToTarget = actor.transform.DOLookAt(result, 0.5f);
             await rotateToTarget.AsyncWaitForCompletion().AsUniTask().AttachExternalCancellation(_tokenSource.Token);
         }
 

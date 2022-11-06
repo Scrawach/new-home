@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.AI;
 
 namespace CodeBase.Buildings
 {
@@ -28,10 +29,21 @@ namespace CodeBase.Buildings
         private bool IsAvailablePlace(Vector2Int point, Vector2Int size)
         {
             for (var x = 0; x < size.x; x++)
-            for (var y = 0; y < size.y; y++) 
-                if (_buildings[point.x + x, point.y + y] != null) 
+            for (var y = 0; y < size.y; y++)
+            {
+                var notAvailable = _buildings[point.x + x, point.y + y] != null;
+                var isHasNavMesh = IsHasNavMesh(point.x + x, point.y + y);
+                if (notAvailable || !isHasNavMesh) 
                     return false;
+            }
             return true;
+        }
+
+        private bool IsHasNavMesh(int x, int y)
+        {
+            var center = new Vector3(x, 0f, y);
+            NavMesh.SamplePosition(center, out var hit, 0.4f, 1 << NavMesh.GetAreaFromName("Walkable"));
+            return hit.hit;
         }
 
         private bool InBorder(Vector2Int point, Vector2Int buildingSize)
@@ -43,6 +55,13 @@ namespace CodeBase.Buildings
                 return false;
             
             return true;
+        }
+
+        public void Remove(Vector2Int point, Building building)
+        {
+            for (var x = 0; x < building.Size.x; x++)
+            for (var y = 0; y < building.Size.y; y++)
+                _buildings[point.x + x, point.y + y] = null;
         }
     }
 }

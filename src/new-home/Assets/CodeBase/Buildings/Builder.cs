@@ -1,12 +1,15 @@
 ﻿using System;
 using CodeBase.Actors;
 using UnityEngine;
+using UnityEngine.AI;
+using UnityEngine.UI;
 
 namespace CodeBase.Buildings
 {
     public class Builder : MonoBehaviour
     {
         public TaskGiver TaskGiver;
+        public MainCapsule Main;
         
         [SerializeField]
         private BuildingPreview _previewBuilding;
@@ -25,11 +28,37 @@ namespace CodeBase.Buildings
 
         private BuildingsGrid _grid;
 
+        [SerializeField]
+        private Vector2Int _boardSize = new Vector2Int(10, 10);
+
+        public bool IsDebug;
+        public Building[] BakeBuilding;
+
         private void Awake()
         {
             _camera = Camera.main;
             _ground = new Plane(Vector3.up, Vector3.zero);
-            _grid = new BuildingsGrid(new Vector2Int(10, 10));
+            _grid = new BuildingsGrid(_boardSize);
+
+            foreach (var building in BakeBuilding) 
+                _grid.Place(building.transform.position.ToVector2Int(), building);
+        }
+
+        private void OnDrawGizmos()
+        {
+            if (!IsDebug)
+                return;
+            
+            for (var x = 0; x < _boardSize.x; x++)
+            for (var y = 0; y < _boardSize.y; y++)
+            {
+                NavMeshHit hit;
+                var center = new Vector3(x, 0f, y);
+                NavMesh.SamplePosition(center, out hit, 0.4f, 1 << NavMesh.GetAreaFromName("Walkable"));
+                if (hit.hit)
+                    Gizmos.DrawCube(center, new Vector3(1, 0.1f, 1));
+            }
+            
         }
 
         private void Update()
@@ -54,6 +83,12 @@ namespace CodeBase.Buildings
 
         public void Select(Building building)
         {
+            if (!Main.HasResources(building.RequiredForBuilding))
+            {
+                Main.InvokeNotEnough();
+                return;
+            }
+            
             _isProcessing = true;
             _processBuilding = building;
             _previewBuilding = building.GetComponentInChildren<BuildingPreview>();
@@ -65,7 +100,16 @@ namespace CodeBase.Buildings
         private void Build(Vector3 at)
         {
             _isProcessing = false;
+
+            if (!Main.HasResources(_processBuilding.RequiredForBuilding))
+            {
+                Main.InvokeNotEnough();
+                return;
+            }
+            
+            Main.UseResources(_processBuilding.RequiredForBuilding);
             var building = Instantiate(_processBuilding, at, Quaternion.identity);
+            building.Construct(Main);
             TaskGiver.Build(building);
         }
 
@@ -86,5 +130,8 @@ namespace CodeBase.Buildings
 
             throw new InvalidOperationException("Not found ground!");
         }
+
+        public void Remove(Building building) => 
+            _grid.Remove(building.transform.position.ToVector2Int(), building);
     }
 }
